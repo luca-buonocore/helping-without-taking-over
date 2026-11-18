@@ -17,7 +17,11 @@ and open http://localhost:8765.
 - **State is only the list of choices** (plus the current scene and phase). Every meter is recomputed from that list, so replay, restart and reload cannot drift out of sync.
 - **Four meters**: Result quality, Relationship with Alex, Your time, Alex's ownership. The first three change immediately. Ownership changes one scene later ("Since last time…"), because the cost of taking over is delayed in real life.
 - **Branching**: scene 2 opens differently depending on scene 1. Scene 3 reads the pattern of the first two choices (Alex is dependent, owning or withdrawn) and changes Alex's lines, reactions and effects.
-- **Scene 2 is the exception**: only the manager can remove the blocker, so stepping in (then handing the work back) is the strongest move. Refusing help leaves Alex stuck.
+- **No style always wins.** Each option is the best move somewhere and costly elsewhere:
+  - Scene 1: coaching builds ownership but costs quality and goodwill the night before a client meeting; taking over does the opposite.
+  - Scene 2: only the manager can remove the blocker, so taking over is right; coaching here is wasted homework, and refusing leaves Alex stuck.
+  - Scene 3: with an Alex who already owns their work, coaching feels like micromanagement and stepping back is best; with a withdrawn Alex, coaching repairs the relationship.
+- **Situations stay fixed on purpose**: what changes between runs is Alex (how problems reach you, what Alex says, how they react), so runs can be compared like for like.
 - **End screen**: an epilogue six months later, a comparison with the previous run, and a step-by-step timeline.
 - **Restart** discards the current run and keeps completed runs.
 

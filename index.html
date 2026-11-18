@@ -144,21 +144,21 @@ const SCENES = [
     options: [
       {
         id: 'take',
-        text: `"Leave it with me." Rework the deck tonight and walk Alex through it in the morning.`,
+        text: `"Leave it with me." Rework the deck yourself tonight and walk Alex through the new version at 8 am.`,
         effects: { quality: 20, relationship: 10, time: -25, ownership: -15 },
         reaction: { alex: `Oh, thank you. Really. I owe you one.`, narration: `The deck is sharp. Nordwind's director praises "the clear storyline". Alex presents well, but looks over at you every time a question comes.` },
         later: `Alex now sends you every slide before it goes anywhere.`
       },
       {
         id: 'support',
-        text: `Spend 20 minutes asking questions: "What do you want Nordwind to decide?" Let Alex do the rewrite, and book a debrief for after.`,
-        effects: { quality: 5, relationship: 5, time: -10, ownership: 15 },
-        reaction: { alex: `Okay... so the ask goes first. I can do that.`, narration: `Alex stays until eight. The deck is solid, not brilliant, and one answer wobbles. In the debrief, Alex names two fixes before you say a word.` },
+        text: `Ask Alex three questions about what Nordwind must decide, then let them rewrite the deck tonight on their own.`,
+        effects: { quality: -5, relationship: -5, time: -10, ownership: 15 },
+        reaction: { alex: `Questions? Now? I was kind of hoping for actual help...`, narration: `Alex works until 10 pm, tired and a little resentful. The deck is better, but Nordwind's director asks for "a sharper version next time". Afterwards Alex admits: "I think I finally get the structure."` },
         later: `Alex started a checklist for client decks. Nobody asked them to.`
       },
       {
         id: 'back',
-        text: `"You know this client better than anyone. I trust you." Then head home.`,
+        text: `"You know this client better than anyone, and I trust your judgement." Then pack up and head home.`,
         effects: { quality: -15, relationship: -10, time: 5, ownership: 5 },
         reaction: { alex: `Right. Sure. Thanks.`, narration: `The presentation is rough and Nordwind asks for a follow-up meeting. Alex doesn't mention it. You hear about it from the account director.` },
         later: `Alex is figuring things out alone, and keeping problems to themselves.`
@@ -185,24 +185,24 @@ const SCENES = [
     options: [
       {
         id: 'back',
-        text: `"Keep pushing Finance. Find a way."`,
+        text: `"Keep pushing Finance, they'll answer eventually. Find a way, I know you can handle this."`,
         effects: { quality: -15, relationship: -15, time: 5, ownership: -5 },
         reaction: { alex: `...Okay. I'll try again.`, narration: `Alex sends a fourth email. Finance doesn't answer. The deadline slips, and Alex starts to believe that asking for help is pointless.` },
         later: `Alex has stopped raising problems early. What's the point?`
       },
       {
         id: 'support',
-        text: `Make the one call only you can make. Then hand it straight back: "You're unblocked. What's your new plan?"`,
-        effects: { quality: 15, relationship: 10, time: -5, ownership: 10 },
-        reaction: { alex: `That was quick. Okay, new plan by tomorrow morning.`, narration: `Ten minutes on the phone and the budget is approved. The next morning a revised plan is in your inbox, with Alex's name on it.` },
-        later: `Alex learned the difference between "help me" and "do it for me".`
+        text: `Coach Alex for half an hour on writing a stronger request to Finance, then let them try again.`,
+        effects: { quality: -10, relationship: -10, time: -10, ownership: -5 },
+        reaction: { alex: `I've already sent three. They don't read requests from people at my level.`, narration: `Alex rewrites the request beautifully. Finance ignores it anyway: the rule is the rule. Another week is lost, and Alex wonders why you made them do what only you could do.` },
+        later: `Alex has learned that asking you for help means homework, not help.`
       },
       {
         id: 'take',
-        text: `Call Finance, then take over the re-plan yourself so nothing else slips.`,
-        effects: { quality: 10, relationship: 5, time: -20, ownership: -15 },
-        reaction: { alex: `Great, thanks. Just let me know what you need from me.`, narration: `The budget is approved and the project is back on track. It's your plan now. Alex waits for instructions.` },
-        later: `Alex now waits to be told what the next step is.`
+        text: `Call the Finance director yourself, get the budget approved today, and tell Alex the project is moving.`,
+        effects: { quality: 15, relationship: 10, time: -5, ownership: 5 },
+        reaction: { alex: `That was quick. Okay, I'll update the plan tonight.`, narration: `Ten minutes on the phone and the budget is approved. The next morning a revised plan is in your inbox, with Alex's name on it.` },
+        later: `Alex learned the difference between "help me" and "do it for me".`
       }
     ]
   },
@@ -224,24 +224,24 @@ const SCENES = [
     options: [
       {
         id: 'support',
-        text: `Ask: "What would you do if I weren't here?" Listen, push back once, then back Alex's decision.`,
+        text: `Sit down with Alex and ask: "What would you do if I weren't here?" Then back their decision.`,
         effects: (p) => ({
-          dependent: { quality: 5, relationship: 5, time: -10, ownership: 15 },
-          owning: { quality: 15, relationship: 10, time: -5, ownership: 10 },
+          dependent: { quality: -5, relationship: 5, time: -10, ownership: 10 },
+          owning: { quality: 5, relationship: -10, time: -10, ownership: -5 },
           withdrawn: { quality: 5, relationship: 15, time: -10, ownership: 10 }
         })[p],
         reaction: (p) => ({
-          dependent: { alex: `I... honestly don't know. Maybe tell them now?`, narration: `It takes Alex twenty minutes and a lot of looking at you. But the decision is theirs. On the call, Alex's voice shakes. It holds.` },
-          owning: { alex: `Tell them now. Bad news doesn't get better with age.`, narration: `You challenge one assumption. Alex adjusts the plan and runs the call. Nordwind is unhappy, but thanks them for the honesty.` },
+          dependent: { alex: `I... honestly don't know. Maybe tell them now?`, narration: `It takes Alex twenty minutes and a lot of looking at you. The decision is theirs, but the call is shaky and Nordwind hangs up unconvinced. Still, Alex's voice held.` },
+          owning: { alex: `I already know what I'd do. I came for a sounding board, not a quiz.`, narration: `You spend forty minutes on questions Alex had already answered. The call goes fine, but Alex leaves your office deflated. Next time, they might not bring it to you at all.` },
           withdrawn: { alex: `You actually want to know what I think?`, narration: `Alex is wary at first. Then the plan pours out, more thought-through than you expected. Something between you starts to repair.` }
         })[p]
       },
       {
         id: 'back',
-        text: `"It's your call." Leave it there.`,
+        text: `"It's your call, and I trust you to make it." Then leave Alex to prepare for the call.`,
         effects: (p) => ({
           dependent: { quality: -15, relationship: -10, time: 5, ownership: 5 },
-          owning: { quality: 10, relationship: 5, time: 10, ownership: 10 },
+          owning: { quality: 10, relationship: 10, time: 10, ownership: 10 },
           withdrawn: { quality: -10, relationship: -15, time: 5, ownership: -5 }
         })[p],
         reaction: (p) => ({
@@ -252,7 +252,7 @@ const SCENES = [
       },
       {
         id: 'take',
-        text: `Make the decision yourself and lead the client call. Alex can listen in.`,
+        text: `Make the decision yourself and lead the client call at 3 pm. Alex can listen in and take notes.`,
         effects: (p) => ({
           dependent: { quality: 10, relationship: 10, time: -20, ownership: -15 },
           owning: { quality: 5, relationship: -10, time: -20, ownership: -15 },
