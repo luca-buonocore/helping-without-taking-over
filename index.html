@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Helping without taking over</title>
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --card: #ffffff;
+    --ink: #1f2933;
+    --muted: #5b6672;
+    --line: #e3dfd6;
+    --accent: #1f6f8b;
+    --accent-ink: #ffffff;
+    --warm: #e2674b;
+    --soft: #eef5f7;
+    --bubble: #fdf1e9;
+    --good: #2f8f5b;
+    --bad: #c8463b;
+    --bar-bg: #ebe7df;
+    --take: #e2674b;
+    --support: #1f6f8b;
+    --back: #8a6bb8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14181c; --card: #1d2329; --ink: #e8ecef; --muted: #a3adb7; --line: #2e363e;
+      --accent: #5bb3cf; --accent-ink: #0d1316; --warm: #f08a70; --soft: #1a2a31; --bubble: #2c2420;
+      --good: #5cc48a; --bad: #f07b70; --bar-bg: #2a3138; --take: #f08a70; --support: #5bb3cf; --back: #b49ae0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181c; --card: #1d2329; --ink: #e8ecef; --muted: #a3adb7; --line: #2e363e;
+    --accent: #5bb3cf; --accent-ink: #0d1316; --warm: #f08a70; --soft: #1a2a31; --bubble: #2c2420;
+    --good: #5cc48a; --bad: #f07b70; --bar-bg: #2a3138; --take: #f08a70; --support: #5bb3cf; --back: #b49ae0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header.top {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--card);
+  }
+  .brand { font-weight: 700; letter-spacing: .2px; }
+  .brand small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 20px 16px 48px; }
+  .grid { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } .grid aside { order: -1; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  aside.card { position: sticky; top: 16px; padding: 18px; }
+  @media (max-width: 760px) { aside.card { position: static; } .meter { margin-bottom: 8px; } .meter .hint { display: none; } }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 10px; }
+  h2 { font-size: 24px; line-height: 1.25; margin: 4px 0 12px; }
+  h2:focus, h1:focus { outline: none; }
+  h3 { font-size: 16px; margin: 0 0 10px; }
+  .eyebrow { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .6px; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  button { font: inherit; cursor: pointer; }
+  .btn {
+    background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 10px;
+    padding: 11px 18px; font-weight: 600;
+  }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.small { padding: 7px 12px; font-size: 14px; font-weight: 500; }
+  .btn:focus-visible, .option:focus-visible, .link:focus-visible { outline: 3px solid var(--warm); outline-offset: 2px; }
+  .link { background: none; border: 0; color: var(--muted); text-decoration: underline; padding: 0; font-size: 14px; }
+  .alex { display: flex; gap: 12px; align-items: flex-start; margin: 16px 0; }
+  .avatar {
+    flex: 0 0 44px; height: 44px; border-radius: 50%; background: var(--warm); color: #fff;
+    display: grid; place-items: center; font-weight: 700;
+  }
+  .bubble { background: var(--bubble); border-radius: 4px 14px 14px 14px; padding: 12px 14px; font-style: italic; }
+  .bubble b { display: block; font-style: normal; font-size: 13px; color: var(--muted); margin-bottom: 2px; }
+  .options { display: grid; gap: 10px; margin-top: 8px; }
+  .option {
+    text-align: left; background: var(--soft); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .option:hover { border-color: var(--accent); }
+  .banner { background: var(--soft); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; }
+  .yourchoice { border-left: 4px solid var(--line); padding: 4px 0 4px 12px; margin-bottom: 8px; }
+  .meter { margin-bottom: 14px; }
+  .meter .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 14px; }
+  .meter .label { font-weight: 600; }
+  .meter .hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .bar { height: 10px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; margin-top: 4px; }
+  .bar span { display: block; height: 100%; background: var(--accent); border-radius: 6px; transition: width .6s ease; }
+  .meter.ownership .bar span { background: var(--warm); }
+  .delta { font-size: 13px; font-weight: 700; margin-left: 6px; }
+  .delta.up { color: var(--good); } .delta.down { color: var(--bad); }
+  .chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; color: #fff; white-space: nowrap; }
+  .chip.take { background: var(--take); } .chip.support { background: var(--support); } .chip.back { background: var(--back); }
+  :root[data-theme="dark"] .chip, .chip { color: #fff; }
+  .timeline { list-style: none; padding: 0; margin: 0; }
+  .timeline li { border-left: 3px solid var(--line); padding: 0 0 16px 16px; position: relative; }
+  .timeline li::before { content: ""; position: absolute; left: -8px; top: 4px; width: 13px; height: 13px; border-radius: 50%; background: var(--accent); }
+  .timeline .t-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .section { margin-top: 26px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+  .epilogue { border-left: 5px solid var(--warm); padding-left: 16px; }
+  .scroll-x { overflow-x: auto; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Helping without taking over<small id="runLabel"></small></div>
+  <button class="btn ghost small" data-action="restart" id="restartBtn" hidden>Restart</button>
+</header>
+<main class="wrap" id="app" aria-live="polite"></main>
+
+<script>
+/* ---------- Content ---------- */
+// Meters start here. Every value is clamped to 0..100.
+const START = { quality: 50, relationship: 55, time: 70, ownership: 50 };
+
+const METERS = [
+  { key: 'quality', label: 'Result quality', hint: 'How good the work is right now.' },
+  { key: 'relationship', label: 'Relationship with Alex', hint: 'How supported Alex feels by you.' },
+  { key: 'time', label: 'Your time', hint: 'Time left for your own work.' },
+  { key: 'ownership', label: "Alex's ownership", hint: 'Alex thinks it through, decides and follows through. Changes show up later.' }
+];
+
+const STYLES = {
+  take: 'Took over',
+  support: 'Supported',
+  back: 'Stepped back'
+};
+
+// Three connected scenes. Text and effects can depend on earlier choices.
+// "ownership" effects are delayed: they are applied when the next scene starts.
+const SCENES = [
+  {
+    title: 'The deck',
+    when: 'Monday, 5:40 pm',
+    context: () => `Tomorrow at 10:00 Alex presents the quarterly review to Nordwind, your biggest client. You open the draft. The key message is buried on slide 9 and the numbers have no "so what".`,
+    alex: () => `I've been staring at this for hours. Could you take a look? Honestly, you'd do it so much better than me.`,
+    options: [
+      {
+        id: 'take',
+        text: `"Leave it with me." Rework the deck tonight and walk Alex through it in the morning.`,
+        effects: { quality: 20, relationship: 10, time: -25, ownership: -15 },
+        reaction: { alex: `Oh, thank you. Really. I owe you one.`, narration: `The deck is sharp. Nordwind's director praises "the clear storyline". Alex presents well, but looks over at you every time a question comes.` },
+        later: `Alex now sends you every slide before it goes anywhere.`
+      },
+      {
+        id: 'support',
+        text: `Spend 20 minutes asking questions: "What do you want Nordwind to decide?" Let Alex do the rewrite, and book a debrief for after.`,
+        effects: { quality: 5, relationship: 5, time: -10, ownership: 15 },
+        reaction: { alex: `Okay... so the ask goes first. I can do that.`, narration: `Alex stays until eight. The deck is solid, not brilliant, and one answer wobbles. In the debrief, Alex names two fixes before you say a word.` },
+        later: `Alex started a checklist for client decks. Nobody asked them to.`
+      },
+      {
+        id: 'back',
+        text: `"You know this client better than anyone. I trust you." Then head home.`,
+        effects: { quality: -15, relationship: -10, time: 5, ownership: 5 },
+        reaction: { alex: `Right. Sure. Thanks.`, narration: `The presentation is rough and Nordwind asks for a follow-up meeting. Alex doesn't mention it. You hear about it from the account director.` },
+        later: `Alex is figuring things out alone, and keeping problems to themselves.`
+      }
+    ]
+  },
+  {
+    title: 'The blocker',
+    when: 'Two weeks later',
+    context: (c) => {
+      const base = `The Nordwind follow-up project needs budget sign-off from Finance, and Finance only accepts requests from a manager. Only you can unblock this.`;
+      const lead = {
+        take: `Alex hasn't chased Finance once. They forwarded you the email thread with a single line: "Can you deal with this?"`,
+        support: `Alex has chased Finance twice and drafted the business case, then comes to you.`,
+        back: `You find out by accident: the project is six days behind. Alex has been stuck on Finance for a week and didn't say a word.`
+      }[c[0]];
+      return `${lead} ${base}`;
+    },
+    alex: (c) => ({
+      take: `You're better with Finance anyway.`,
+      support: `I've done what I can. They need a manager's sign-off. Can you help me unblock it?`,
+      back: `I didn't want to bother you. I thought I should handle it myself.`
+    })[c[0]],
+    options: [
+      {
+        id: 'back',
+        text: `"Keep pushing Finance. Find a way."`,
+        effects: { quality: -15, relationship: -15, time: 5, ownership: -5 },
+        reaction: { alex: `...Okay. I'll try again.`, narration: `Alex sends a fourth email. Finance doesn't answer. The deadline slips, and Alex starts to believe that asking for help is pointless.` },
+        later: `Alex has stopped raising problems early. What's the point?`
+      },
+      {
+        id: 'support',
+        text: `Make the one call only you can make. Then hand it straight back: "You're unblocked. What's your new plan?"`,
+        effects: { quality: 15, relationship: 10, time: -5, ownership: 10 },
+        reaction: { alex: `That was quick. Okay, new plan by tomorrow morning.`, narration: `Ten minutes on the phone and the budget is approved. The next morning a revised plan is in your inbox, with Alex's name on it.` },
+        later: `Alex learned the difference between "help me" and "do it for me".`
+      },
+      {
+        id: 'take',
+        text: `Call Finance, then take over the re-plan yourself so nothing else slips.`,
+        effects: { quality: 10, relationship: 5, time: -20, ownership: -15 },
+        reaction: { alex: `Great, thanks. Just let me know what you need from me.`, narration: `The budget is approved and the project is back on track. It's your plan now. Alex waits for instructions.` },
+        later: `Alex now waits to be told what the next step is.`
+      }
+    ]
+  },
+  {
+    title: 'The call',
+    when: 'Six weeks later',
+    // Scene 3 reacts to the pattern of the first two choices (see profileOf).
+    context: (c) => {
+      const base = `The Nordwind launch will be two weeks late. Someone has to decide: tell the client now, or ask the team for weekend work and hope to catch up. The client call is at 3 pm.`;
+      return profileOf(c) === 'withdrawn'
+        ? `${base} Alex hasn't come to you about it. You hear about it from the team and go to find them.`
+        : base;
+    },
+    alex: (c) => ({
+      dependent: `Just tell me what to do. You always know what's right with Nordwind.`,
+      owning: `I see two options and I lean towards telling them now. Can I test my thinking with you for five minutes?`,
+      withdrawn: `I was going to sort it out myself. I didn't think you'd want to get involved.`
+    })[profileOf(c)],
+    options: [
+      {
+        id: 'support',
+        text: `Ask: "What would you do if I weren't here?" Listen, push back once, then back Alex's decision.`,
+        effects: (p) => ({
+          dependent: { quality: 5, relationship: 5, time: -10, ownership: 15 },
+          owning: { quality: 15, relationship: 10, time: -5, ownership: 10 },
+          withdrawn: { quality: 5, relationship: 15, time: -10, ownership: 10 }
+        })[p],
+        reaction: (p) => ({
+          dependent: { alex: `I... honestly don't know. Maybe tell them now?`, narration: `It takes Alex twenty minutes and a lot of looking at you. But the decision is theirs. On the call, Alex's voice shakes. It holds.` },
+          owning: { alex: `Tell them now. Bad news doesn't get better with age.`, narration: `You challenge one assumption. Alex adjusts the plan and runs the call. Nordwind is unhappy, but thanks them for the honesty.` },
+          withdrawn: { alex: `You actually want to know what I think?`, narration: `Alex is wary at first. Then the plan pours out, more thought-through than you expected. Something between you starts to repair.` }
+        })[p]
+      },
+      {
+        id: 'back',
+        text: `"It's your call." Leave it there.`,
+        effects: (p) => ({
+          dependent: { quality: -15, relationship: -10, time: 5, ownership: 5 },
+          owning: { quality: 10, relationship: 5, time: 10, ownership: 10 },
+          withdrawn: { quality: -10, relationship: -15, time: 5, ownership: -5 }
+        })[p],
+        reaction: (p) => ({
+          dependent: { alex: `My call? I... okay.`, narration: `Alex freezes, then books weekend overtime without telling the client. The team is exhausted and the launch is still late.` },
+          owning: { alex: `Fair enough. I'll let you know how it goes.`, narration: `Alex tells Nordwind the truth and brings a recovery plan. You hear how it went from a two-line message. That's all you needed.` },
+          withdrawn: { alex: `Yeah. I figured.`, narration: `Alex handles it alone, as they've learned to. The client finds out about the delay a week too late.` }
+        })[p]
+      },
+      {
+        id: 'take',
+        text: `Make the decision yourself and lead the client call. Alex can listen in.`,
+        effects: (p) => ({
+          dependent: { quality: 10, relationship: 10, time: -20, ownership: -15 },
+          owning: { quality: 5, relationship: -10, time: -20, ownership: -15 },
+          withdrawn: { quality: 5, relationship: -5, time: -20, ownership: -10 }
+        })[p],
+        reaction: (p) => ({
+          dependent: { alex: `Thank you. I'd have messed it up.`, narration: `You run the call and it goes fine. Alex takes notes, and thanks you twice afterwards.` },
+          owning: { alex: `Oh. Okay. I had a plan, but... sure.`, narration: `The call goes fine. Alex is quiet for the rest of the day. Their plan stays in a document nobody opens.` },
+          withdrawn: { alex: `Sure. You're the manager.`, narration: `You save the client relationship. Alex listens in with their camera off.` }
+        })[p]
+      }
+    ]
+  }
+];
+
+/* ---------- Engine ----------
+   The only stored state is the list of choices (+ where you are).
+   Every meter value is recomputed from the choices, so replay,
+   restart and reload can't drift out of sync. */
+const clamp = (v) => Math.max(0, Math.min(100, v));
+
+function optionOf(sceneIndex, id) {
+  return SCENES[sceneIndex].options.find((o) => o.id === id);
+}
+
+// How Alex shows up in scene 3, based on the first two choices.
+function profileOf(choices) {
+  const m = computeMeters(choices.slice(0, 2), 2);
+  if (m.relationship < 40) return 'withdrawn';
+  if (m.ownership >= 55) return 'owning';
+  return 'dependent';
+}
+
+function effectsOf(i, choices) {
+  const e = optionOf(i, choices[i]).effects;
+  return typeof e === 'function' ? e(profileOf(choices)) : e;
+}
+
+function reactionOf(i, choices) {
+  const r = optionOf(i, choices[i]).reaction;
+  return typeof r === 'function' ? r(profileOf(choices)) : r;
+}
+
+// revealed = how many choices have had their (delayed) ownership effect applied.
+function computeMeters(choices, revealed) {
+  const m = { ...START };
+  choices.forEach((_, i) => {
+    const e = effectsOf(i, choices);
+    m.quality = clamp(m.quality + e.quality);
+    m.relationship = clamp(m.relationship + e.relationship);
+    m.time = clamp(m.time + e.time);
+    if (i < revealed) m.ownership = clamp(m.ownership + e.ownership);
+  });
+  return m;
+}
+
+function epilogue(m) {
+  let title, text;
+  if (m.ownership >= 65 && m.relationship >= 50) {
+    title = 'Alex is moving';
+    text = `Six months later, Alex runs the Nordwind account. They bring you decisions, not problems, and an honest "I'm stuck" when they are. Their promotion case almost writes itself.`;
+  } else if (m.ownership >= 60 && m.relationship < 50) {
+    title = 'Alex grew, on their own';
+    text = `Alex became capable and independent, mostly by figuring things out alone. Last week they accepted a role in another team. "I learned a lot here," they told you. "Mostly by myself."`;
+  } else if (m.relationship < 40) {
+    title = 'Alex has gone quiet';
+    text = `Alex does what is asked, and nothing more. Problems reach you late, if at all. In your last 1:1 they asked whether there are openings in other teams.`;
+  } else if (m.ownership < 45 && m.relationship >= 55) {
+    title = 'A very comfortable room';
+    text = `Alex is loyal, liked and happy. They still send you every client email before it goes out. When a senior role opens up, Alex doesn't apply. "I'm not ready," they say. You're not sure they ever will be.`;
+  } else if (m.ownership < 45) {
+    title = 'Alex has gone quiet';
+    text = `Alex does what is asked, and nothing more. Problems reach you late, if at all. In your last 1:1 they asked whether there are openings in other teams.`;
+  } else {
+    title = 'Getting there';
+    text = `Alex is growing, unevenly. Some weeks they take the lead; other weeks they wait for you. Which version shows up seems to depend on you.`;
+  }
+  if (m.time <= 25) text += ` And you? You've been finishing other people's work in the evenings for weeks.`;
+  else if (m.time >= 65) text += ` You still had time for your own work.`;
+  return { title, text };
+}
+
+/* ---------- Persistence (localStorage, safe if unavailable) ---------- */
+const RUN_KEY = 'hwto.run.v1';
+const HIST_KEY = 'hwto.history.v1';
+const fresh = () => ({ phase: 'intro', scene: 0, choices: [] });
+
+function validChoices(c) {
+  return Array.isArray(c) && c.length <= SCENES.length && c.every((id, i) => optionOf(i, id));
+}
+function read(key, fallback) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; }
+}
+function write(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage blocked: app still works for this session */ }
+}
+function loadRun() {
+  const s = read(RUN_KEY, null);
+  const ok = s && ['intro', 'scene', 'reaction', 'end'].includes(s.phase) && validChoices(s.choices) &&
+    Number.isInteger(s.scene) && s.scene >= 0 && s.scene < SCENES.length;
+  return ok ? s : fresh();
+}
+function loadHistory() {
+  const h = read(HIST_KEY, []);
+  return Array.isArray(h) ? h.filter((r) => r && validChoices(r.choices) && r.choices.length === SCENES.length) : [];
+}
+
+let state = loadRun();
+let history = loadHistory();
+
+/* ---------- Actions ---------- */
+function setState(next) { state = next; write(RUN_KEY, state); render(); }
+
+const actions = {
+  start: () => setState({ phase: 'scene', scene: 0, choices: [] }),
+  restart: () => setState({ phase: 'scene', scene: 0, choices: [] }),
+  choose: (id) => {
+    if (state.phase !== 'scene' || state.choices.length !== state.scene) return;
+    setState({ ...state, phase: 'reaction', choices: [...state.choices, id] });
+  },
+  next: () => {
+    if (state.phase !== 'reaction') return;
+    if (state.scene < SCENES.length - 1) {
+      setState({ ...state, phase: 'scene', scene: state.scene + 1 });
+    } else {
+      // The run is complete: save it once, here (not on render), so reloads don't duplicate it.
+      history = [...history, { choices: state.choices, at: Date.now() }];
+      write(HIST_KEY, history);
+      setState({ ...state, phase: 'end' });
+    }
+  },
+  wipe: () => {
+    if (!confirm('Delete all saved runs and start over?')) return;
+    history = [];
+    write(HIST_KEY, history);
+    setState(fresh());
+  }
+};
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-action]');
+  if (!b) return;
+  actions[b.dataset.action]?.(b.dataset.id);
+});
+
+/* ---------- Views ---------- */
+function metersView(m, before) {
+  return METERS.map(({ key, label, hint }) => {
+    const d = before ? m[key] - before[key] : 0;
+    const delta = d ? `<span class="delta ${d > 0 ? 'up' : 'down'}">${d > 0 ? '+' : ''}${d}</span>` : '';
+    return `<div class="meter ${key}">
+      <div class="row"><span class="label">${label}</span><span>${m[key]}${delta}</span></div>
+      <div class="bar" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${m[key]}"><span style="width:${m[key]}%"></span></div>
+      <div class="hint">${hint}</div>
+    </div>`;
+  }).join('');
+}
+
+function alexView(line) {
+  return `<div class="alex"><div class="avatar" aria-hidden="true">A</div><div class="bubble"><b>Alex</b>${line}</div></div>`;
+}
+
+function chip(id) { return `<span class="chip ${id}">${STYLES[id]}</span>`; }
+
+function layout(main, m, before) {
+  return `<div class="grid"><section class="card">${main}</section>
+    <aside class="card" aria-label="Meters"><h3>How things stand</h3>${metersView(m, before)}</aside></div>`;
+}
+
+function introView() {
+  const runs = history.length;
+  return `<section class="card" style="max-width:680px;margin:0 auto">
+    <p class="eyebrow">A short leadership simulation · 3 to 5 minutes</p>
+    <h1 tabindex="-1">Helping without taking over</h1>
+    <p>You manage <b>Alex</b>, a capable member of your team who sometimes gets stuck. Over the next few weeks you will decide, three times, how to help.</p>
+    <p>Every choice changes the work, your relationship, your own time and how much Alex owns their work. Some effects show up straight away. Others take time.</p>
+    <p class="muted">There is no score and no single right answer. Play once, then play again with a different approach and compare.</p>
+    ${runs ? `<p class="muted">You have completed ${runs} run${runs > 1 ? 's' : ''}.</p>` : ''}
+    <div class="actions"><button class="btn" data-action="start">Meet Alex</button>
+    ${runs ? `<button class="link" data-action="wipe">Delete saved runs</button>` : ''}</div>
+  </section>`;
+}
+
+function sceneHeader(i) {
+  return `<p class="eyebrow">Scene ${i + 1} of ${SCENES.length} · ${SCENES[i].when}</p>
+    <h2 tabindex="-1">${SCENES[i].title}</h2>`;
+}
+
+function sceneView() {
+  const i = state.scene, c = state.choices, s = SCENES[i];
+  const now = computeMeters(c, i);
+  let banner = '', before = null;
+  if (i > 0) {
+    before = computeMeters(c, i - 1);
+    const d = now.ownership - before.ownership;
+    banner = `<div class="banner"><b>Since last time:</b> ${optionOf(i - 1, c[i - 1]).later}
+      <span class="delta ${d >= 0 ? 'up' : 'down'}">Alex's ownership ${d >= 0 ? '+' : ''}${d}</span></div>`;
+  }
+  const opts = s.options.map((o) => `<button class="option" data-action="choose" data-id="${o.id}">${o.text}</button>`).join('');
+  return layout(`${sceneHeader(i)}${banner}<p>${s.context(c)}</p>${alexView(s.alex(c))}
+    <h3>How do you respond?</h3><div class="options">${opts}</div>`, now, before);
+}
+
+function reactionView() {
+  const i = state.scene, c = state.choices;
+  const now = computeMeters(c, i);
+  const before = computeMeters(c.slice(0, i), i);
+  const r = reactionOf(i, c);
+  const last = i === SCENES.length - 1;
+  return layout(`${sceneHeader(i)}
+    <div class="yourchoice"><span class="muted">You:</span> ${optionOf(i, c[i]).text}</div>
+    ${alexView(r.alex)}<p>${r.narration}</p>
+    <div class="actions"><button class="btn" data-action="next">${last ? 'See where this leads' : 'Continue'}</button></div>`, now, before);
+}
+
+function timelineView(choices) {
+  return `<ol class="timeline">${choices.map((id, i) => {
+    const r = reactionOf(i, choices);
+    return `<li><div class="t-head"><b>${SCENES[i].title}</b>${chip(id)}</div>
+      <div class="muted">Alex: <i>"${r.alex}"</i></div><div>${r.narration}</div></li>`;
+  }).join('')}</ol>`;
+}
+
+function compareView(prev, cur, prevNo) {
+  const pm = computeMeters(prev, prev.length), cm = computeMeters(cur, cur.length);
+  const rows = SCENES.map((s, i) => `<tr><td>${s.title}</td><td>${chip(prev[i])}</td><td>${chip(cur[i])}</td></tr>`).join('');
+  const mrows = METERS.map(({ key, label }) => {
+    const d = cm[key] - pm[key];
+    return `<tr><td>${label}</td><td>${pm[key]}</td><td>${cm[key]} ${d ? `<span class="delta ${d > 0 ? 'up' : 'down'}">${d > 0 ? '+' : ''}${d}</span>` : ''}</td></tr>`;
+  }).join('');
+  const pe = epilogue(pm).title, ce = epilogue(cm).title;
+  return `<div class="scroll-x"><table>
+    <thead><tr><th></th><th>Run ${prevNo}</th><th>This run</th></tr></thead>
+    <tbody>${rows}${mrows}<tr><td>Where Alex ended up</td><td>${pe}</td><td>${ce}</td></tr></tbody>
+  </table></div>`;
+}
+
+function endView() {
+  const c = state.choices;
+  const now = computeMeters(c, c.length);
+  const before = computeMeters(c, c.length - 1);
+  const ep = epilogue(now);
+  const n = history.length;
+  const prev = n >= 2 ? history[n - 2].choices : null;
+  const compare = prev
+    ? `<div class="section"><h3>Compared with your previous run</h3>${compareView(prev, c, n - 1)}</div>`
+    : `<div class="section banner">Play again and try a different first choice. Your runs will be compared here.</div>`;
+  return layout(`<p class="eyebrow">Six months later</p>
+    <h2 tabindex="-1">${ep.title}</h2>
+    <div class="epilogue"><p>${ep.text}</p></div>
+    ${compare}
+    <div class="section"><h3>What happened, step by step</h3>${timelineView(c)}</div>
+    <div class="actions"><button class="btn" data-action="restart">Play again with another approach</button>
+    <button class="link" data-action="wipe">Delete saved runs</button></div>`, now, before);
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const views = { intro: introView, scene: sceneView, reaction: reactionView, end: endView };
+  app.innerHTML = views[state.phase]();
+  const inRun = state.phase !== 'intro';
+  document.getElementById('restartBtn').hidden = !inRun;
+  const runNo = state.phase === 'end' ? history.length : history.length + 1;
+  document.getElementById('runLabel').textContent = inRun ? `Run ${runNo}` : '';
+  window.scrollTo(0, 0);
+  app.querySelector('h1, h2')?.focus({ preventScroll: true });
+}
+
+render();
+</script>
+</body>
+</html>
